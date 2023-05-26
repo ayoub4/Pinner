@@ -8,6 +8,8 @@ app = Flask(__name__)
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--window-size=1920x1080')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
 chrome_options.binary_location = '/usr/bin/google-chrome'
 
 @app.route('/pin')
@@ -16,7 +18,7 @@ def pin():
     if pin_url:
         # Add any desired Chrome options
 
-        driver = webdriver.Chrome(options=chrome_options, executable_path='chromedriver')
+        driver = webdriver.Chrome(options=chrome_options, executable_path='/usr/local/bin/chromedriver')
         driver.get('https://www.pinterest.fr/login/')
 
         email_input = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
