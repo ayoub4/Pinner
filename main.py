@@ -16,7 +16,7 @@ def pin():
     if pin_url:
         # Add any desired Chrome options
 
-        driver = webdriver.Chrome(options=chrome_options, executable_path='./chromedriver')
+        driver = webdriver.Chrome(options=chrome_options, executable_path='chromedriver')
         driver.get('https://www.pinterest.fr/login/')
 
         email_input = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
