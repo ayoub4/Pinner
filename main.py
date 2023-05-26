@@ -6,12 +6,13 @@ from selenium.webdriver.support import expected_conditions as EC
 
 app = Flask(__name__)
 chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--window-size=1920x1080')
 
-@app.route('/pin', methods=['POST'])
+@app.route('/pin')
 def pin():
     pin_url = request.form.get('pin_url')
     if pin_url:
-
         # Add any desired Chrome options
 
         driver = webdriver.Chrome(options=chrome_options)
@@ -98,4 +99,3 @@ def pin():
 
 if __name__ == '__main__':
     app.run(port=8000)
-
