@@ -104,7 +104,7 @@ def pin():
 
         return "Pin posted: Bague de couple original gravée"
     else:
-        return "Error"
+        return pin_url
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)

@@ -4,7 +4,7 @@ import requests
 api_url = 'https://universcendrier.com/pin'
 
 # Define the pin URL to send in the request
-pin_url = 'https://couplesamoureux.com/wp-content/uploads/2023/03/alliances-coeur-graves-700206_1200x.webp'
+pin_url = 'https://couplesamoureux.com/wp-content/uploads/2023/03/bague-couple-noir-919223_1200x-768x768.webp'
 url='https://universcendrier.com/pin?pin_url=https%253A%252F%252Fcouplesamoureux.com%252Fwp-content%252Fuploads%252F2023%252F03%252Falliances-coeur-graves-700206_1200x.webp'
 # Send the POST request to the API
 response = requests.get(api_url, data={'pin_url': pin_url})
