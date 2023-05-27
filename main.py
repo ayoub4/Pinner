@@ -1,8 +1,12 @@
+import CORS as CORS
 from flask import Flask, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from flask_cors import CORS
+from flask_cors import cross_origin
+
 
 app = Flask(__name__)
 chrome_options = webdriver.ChromeOptions()
@@ -12,7 +16,10 @@ chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
 chrome_options.binary_location = '/usr/bin/google-chrome'
 
+
+CORS(app, resources={r"/*": {"origins": "*"}})
 @app.route('/pin')
+@cross_origin()
 def pin():
     pin_url = request.form.get('pin_url')
     if pin_url:
@@ -98,7 +105,7 @@ def pin():
 
         return "Pin posted: Bague de couple original gravée"
     else:
-        return "Pin URL parameter missing."
+        return "Error"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
