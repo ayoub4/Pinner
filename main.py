@@ -1,5 +1,3 @@
-from urllib.parse import unquote
-
 from flask import Flask, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -23,7 +21,6 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 @cross_origin()
 def pin():
     pin_url = request.form.get('pin_url')
-    pin_url = unquote(pin_url)
     if pin_url:
         # Add any desired Chrome options
 
