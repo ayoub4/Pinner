@@ -21,9 +21,10 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 @cross_origin()
 def pin():
     pin_url = request.args.get('pin_url')
+    pin_title = request.args.get('pin_title')
+    pin_description = request.args.get('pin_description')
     if pin_url:
         # Add any desired Chrome options
-
         driver = webdriver.Chrome(options=chrome_options, executable_path='/usr/local/bin/chromedriver')
         driver.get('https://www.pinterest.fr/login/')
 
@@ -80,13 +81,13 @@ def pin():
         pin_title_input = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[1]/div/div/div[1]/textarea'))
         )
-        pin_title_input.send_keys('Bague de couple original gravée')
+        pin_title_input.send_keys(pin_title)
 
         # Wait for the pin description input to be present
         pin_description_input = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div[2]/div/div/div/div'))
         )
-        pin_description_input.send_keys('''La bague de couple originale gravée est un choix parfait pour les couples qui souhaitent porter des bijoux assortis. Cette bague unique est fabriquée en acier inoxydable de haute qualité et est gravée avec des motifs uniques qui la distinguent des autres bagues de couple ordinaires.''')
+        pin_description_input.send_keys(pin_description)
 
         submit_button = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-save-button"]'))
@@ -102,9 +103,9 @@ def pin():
         # Close the browser
         driver.quit()
 
-        return "Pin posted: Bague de couple original gravée"
+        return "Pin posted:" + pin_title
     else:
-        return pin_url
+        return "Error: 'pin_url' parameter is missing"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
