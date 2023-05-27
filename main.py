@@ -1,4 +1,3 @@
-import CORS as CORS
 from flask import Flask, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
