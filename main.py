@@ -20,7 +20,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 @app.route('/pin')
 @cross_origin()
 def pin():
-    pin_url = request.form.get('pin_url')
+    pin_url = request.args.get('pin_url')
     if pin_url:
         # Add any desired Chrome options
 
