@@ -1,31 +1,38 @@
-import re
-import time
+import Levenshtein
 
-import requests
-from selenium import webdriver
+def find_closest_urls(urls, num_closest=3):
+    closest_urls = []
+    url_distances = {}
+    for i in range(len(urls)):
+        for j in range(i + 1, len(urls)):
+            distance = Levenshtein.distance(urls[i], urls[j])
+            url_distances[(i, j)] = distance
 
-proxy_url = 'http://geo.iproyal.com:12321:sxxq:Sjdjd3ds_country-fr'
+    sorted_distances = sorted(url_distances.items(), key=lambda x: x[1])
 
-# Parse the proxy URL to extract the hostname and port number
-match = re.match(r'http://(.*):(\d+):(.+):(.+)', proxy_url)
-hostname = match.group(1)
-port = int(match.group(2))
-username = match.group(3)
-password = match.group(4)
+    for (i, j), distance in sorted_distances:
+        if len(closest_urls) == num_closest:
+            break
+        if i not in closest_urls:
+            closest_urls.append(i)
+        if j not in closest_urls:
+            closest_urls.append(j)
 
-# Create a proxy configuration dictionary for use with requests and Selenium
-proxies = {
-    'http': f'http://{username}:{password}@{hostname}:{port}',
-    'https': f'https://{username}:{password}@{hostname}:{port}'
-}
+    return [urls[i] for i in closest_urls]
 
-# Use requests library to fetch the IP through the proxy
-response = requests.get('https://ipv4.icanhazip.com', proxies=proxies)
-print(response.text.strip())  # This should print the IP address fetched through the proxy
+url_list = [
+    'https://montapispriere.com/wp-content/uploads/2023/04/Tapisserie-de-pri-re-argent-e-Ikhwan-rouge-musulman-arabe-duba-Turquie-Pakistan-Inde-tapis-de.jpg_Q90.jpg_-wpp1680949749893-150x150.webp',
+    'https://montapispriere.com/wp-content/uploads/2023/04/Tapisserie-de-pri-re-argent-e-Ikhwan-rouge-musulman-arabe-duba-Turquie-Pakistan-Inde-tapis-de.jpg_Q90.jpg_-wpp1680949749893.webp',
+    'https://montapispriere.com/wp-content/uploads/2023/04/Tapisserie-de-pri-re-argent-e-Ikhwan-rouge-musulman-arabe-duba-Turquie-Pakistan-Inde-tapis-de.jpg_Q90.jpg_-wpp1680949749893-768x768.webp',
+    'https://montapispriere.com/wp-content/uploads/2023/04/Tapis-de-pri-re-Hexagonal-violet-110x77cm-appel-Dodya-pri-re-musulmane-islamique-tat-de-la.jpg_Q90.jpg_-wpp1680950543805-300x225.webp',
+    'https://montapispriere.com/wp-content/uploads/2023/03/MON-TAPIS-PRIERE-2.png'
+]
 
-# Set the proxy options for the Chrome driver
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument(f'--proxy-server={proxies["http"]}')
-driver = webdriver.Chrome(options=chrome_options)
-driver.get('https://www.pinterest.fr/login/')
-time.sleep(100)
+closest_urls = find_closest_urls(url_list, num_closest=3)
+
+for url in closest_urls:
+    print(url)
+
+
+
+
