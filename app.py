@@ -224,10 +224,6 @@ def post_next_pin():
 # Schedule the pin queue processing to start at 8 am
 schedule.every().day.at("08:00").do(process_pin_queue)
 
-# Run the scheduled tasks in the background
-while True:
-    schedule.run_pending()
-    time.sleep(1)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
