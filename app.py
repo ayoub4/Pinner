@@ -213,7 +213,7 @@ def process_pin_queue():
                 continue
 
         current_time = datetime.datetime.now().time()
-        if current_time >= datetime.time(8) and current_time <= datetime.time(20):
+        if current_time >= datetime.time(8) and current_time <= datetime.time(22):
             pin_poster, pin_details = pin_queue.get()
             try:
                 print("Posting pin...")
