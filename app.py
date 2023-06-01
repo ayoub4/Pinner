@@ -33,7 +33,7 @@ class PinPoster:
         self.chrome_options.add_argument('--window-size=1920x1080')
         self.chrome_options.add_argument('--no-sandbox')
         self.chrome_options.add_argument('--disable-dev-shm-usage')
-        self.chrome_options.binary_location = '/usr/bin/google-chrome'
+
         self.driver = None
 
     def find_closest_image(self, img_url, images_list):
@@ -56,7 +56,7 @@ class PinPoster:
         return distances[0][0]
 
     def create_pin(self, pin_details):
-        self.driver = webdriver.Chrome(options=self.chrome_options, executable_path='/usr/local/bin/chromedriver')
+        self.driver = webdriver.Chrome(options=self.chrome_options)
         self.driver.get('https://www.pinterest.fr/login/')
 
         email_input = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
