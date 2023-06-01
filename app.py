@@ -1,3 +1,5 @@
+import datetime
+import queue
 import time
 from flask import Flask, request
 from selenium import webdriver
@@ -9,6 +11,7 @@ import Levenshtein
 import random
 import time
 import schedule
+import threading
 
 class PinDetails:
     def __init__(self, img_url, pin_url, pin_title, pin_description):
@@ -30,7 +33,8 @@ class PinPoster:
         self.chrome_options.add_argument('--window-size=1920x1080')
         self.chrome_options.add_argument('--no-sandbox')
         self.chrome_options.add_argument('--disable-dev-shm-usage')
-
+        self.chrome_options.binary_location = '/usr/bin/google-chrome'
+        self.driver = None
 
     def find_closest_image(self, img_url, images_list):
         # Remove extension from the original img_url
@@ -52,51 +56,51 @@ class PinPoster:
         return distances[0][0]
 
     def create_pin(self, pin_details):
-        driver = webdriver.Chrome(options=self.chrome_options)
-        driver.get('https://www.pinterest.fr/login/')
+        self.driver = webdriver.Chrome(options=self.chrome_options, executable_path='/usr/local/bin/chromedriver')
+        self.driver.get('https://www.pinterest.fr/login/')
 
-        email_input = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
+        email_input = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
         email_input.send_keys(self.account.email)
 
-        password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
+        password_input = self.driver.find_element(By.XPATH, '//*[@id="password"]')
         password_input.send_keys(self.account.password)
 
-        login_button = driver.find_element(By.XPATH, '//*[@id="mweb-unauth-container"]/div/div[3]/div/div/div[3]/form/div[7]/button')
+        login_button = self.driver.find_element(By.XPATH, '//*[@id="mweb-unauth-container"]/div/div[3]/div/div/div[3]/form/div[7]/button')
         login_button.click()
 
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-        create_pin_button = driver.find_element(By.XPATH, '//*[@id="HeaderContent"]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div/div')
+        create_pin_button = self.driver.find_element(By.XPATH, '//*[@id="HeaderContent"]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div/div')
         create_pin_button.click()
 
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(
                 (By.XPATH, '//*[@id="create-menu-content"]'))
         )
-        create_menu_content = driver.find_element(By.XPATH, '//*[@id="create-menu-content"]')
+        create_menu_content = self.driver.find_element(By.XPATH, '//*[@id="create-menu-content"]')
         create_pin_button_2 = create_menu_content.find_element(By.XPATH, './/*[text()="Créer une Épingle"]')
         create_pin_button_2.click()
 
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(
                 (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[3]/div'))
         )
-        create_pin_button_3 = WebDriverWait(driver, 10).until(
+        create_pin_button_3 = WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.XPATH, './/*[text()="Créer une nouvelle Épingle"]'))
         )
         create_pin_button_3.click()
 
-        create_pin_by_url = driver.find_element(By.XPATH, '//*[@aria-label="Enregistrer depuis l’URL"]')
+        create_pin_by_url = self.driver.find_element(By.XPATH, '//*[@aria-label="Enregistrer depuis l’URL"]')
         create_pin_by_url.click()
 
-        pin_url_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'scrape-view-website-link')))
+        pin_url_input = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, 'scrape-view-website-link')))
         pin_url_input.send_keys(pin_details.pin_url)
 
-        pin_url_go = driver.find_element(By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[3]/div/div/button/div/div')
+        pin_url_go = self.driver.find_element(By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[3]/div/div/button/div/div')
         pin_url_go.click()
 
         time.sleep(3)
-        image_elements = WebDriverWait(driver, 10).until(
+        image_elements = WebDriverWait(self.driver, 10).until(
             EC.presence_of_all_elements_located((By.XPATH, '//img[contains(@alt, "Sélectionner l\'image dans")]'))
         )
         # Get the src attribute values
@@ -108,22 +112,22 @@ class PinPoster:
                 image_element.click()
                 break
 
-        pin_confirm = driver.find_element(By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div[2]/button/div/div')
+        pin_confirm = self.driver.find_element(By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div[2]/button/div/div')
         pin_confirm.click()
 
         # Wait for the pin title input to be present
-        pin_title_input = WebDriverWait(driver, 10).until(
+        pin_title_input = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[1]/div/div/div[1]/textarea'))
         )
         pin_title_input.send_keys(pin_details.pin_title)
 
         # Wait for the pin description input to be present
-        pin_description_input = WebDriverWait(driver, 10).until(
+        pin_description_input = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div[2]/div/div/div/div'))
         )
         pin_description_input.send_keys(pin_details.pin_description)
 
-        submit_button = WebDriverWait(driver, 10).until(
+        submit_button = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-save-button"]'))
         )
         publish_button = submit_button.find_element(By.XPATH, './/*[contains(text(), "Publier")]')
@@ -131,22 +135,21 @@ class PinPoster:
         publish_button.click()
 
         # Wait for the pin to be created
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="dismiss"]'))
         )
 
         # Close the browser
-        driver.quit()
+        self.driver.quit()
 
         return "Pin posted: " + pin_details.pin_title
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-pin_queue = []
-
-def post_pin(pin_poster, pin_details):
-    pin_poster.create_pin(pin_details)
+pin_queue = queue.Queue()
+pin_queue_lock = threading.Lock()  # Lock to synchronize access to the pin queue
 
 @app.route('/pin')
 @cross_origin()
@@ -193,7 +196,8 @@ def pin():
         pin_poster = PinPoster(account)
 
         # Add the pin post to the queue
-        pin_queue.append((pin_poster, pin_details))
+        with pin_queue_lock:
+            pin_queue.put((pin_poster, pin_details))
 
         return "Pin added to the queue"
     else:
@@ -201,29 +205,30 @@ def pin():
 
 # Function to process the pin queue
 def process_pin_queue():
-    if len(pin_queue) > 0:
-        # Get a random interval between 8 am and 6 pm
-        random_hour = random.randint(8, 17)
-        random_minute = random.randint(0, 59)
+    while True:
+        with pin_queue_lock:
+            if pin_queue.empty():
+                #print("Pin queue is empty. Waiting for new pins...")
+                time.sleep(1)  # Sleep for 20 seconds before checking the queue again
+                continue
 
-        # Schedule the pin post with a random delay
-        schedule.every().day.at(f"{random_hour:02d}:{random_minute:02d}").do(post_next_pin)
+        current_time = datetime.datetime.now().time()
+        if current_time >= datetime.time(8) and current_time <= datetime.time(20):
+            pin_poster, pin_details = pin_queue.get()
+            try:
+                print("Posting pin...")
+                response = pin_poster.create_pin(pin_details)
+                print(response)  # Print the response
+            except Exception as e:
+                print("An error occurred while posting pin:", str(e))
+                # Add the pin back to the queue if it was not successfully posted
+                pin_queue.put((pin_poster, pin_details))
 
-def post_next_pin():
-    if len(pin_queue) > 0:
-        # Get the next pin post from the queue
-        pin_poster, pin_details = pin_queue.pop(0)
-        post_pin(pin_poster, pin_details)
-
-        # Schedule the next pin post with a random delay
-        min_delay = 1  # Minimum delay between pin posts (in minutes)
-        max_delay = 5  # Maximum delay between pin posts (in minutes)
-        random_delay = random.randint(min_delay, max_delay)
-        schedule.every(random_delay).minutes.do(post_next_pin)
-
-# Schedule the pin queue processing to start at 8 am
-schedule.every().day.at("08:00").do(process_pin_queue)
-
+        # Sleep for 2 seconds before processing the next pin in the queue
+        time.sleep(2)
 
 if __name__ == '__main__':
+    process_pin_queue_thread = threading.Thread(target=process_pin_queue)
+    process_pin_queue_thread.start()
+
     app.run(host='0.0.0.0', port=8000)
