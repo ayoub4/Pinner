@@ -54,7 +54,7 @@ class PinPoster:
         return distances[0][0]
 
     def create_pin(self, pin_details):
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+        self.driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=self.chrome_options)
         self.driver.get('https://www.pinterest.fr/login/')
 
         email_input = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
