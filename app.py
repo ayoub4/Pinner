@@ -206,15 +206,14 @@ def pin():
 # Function to process the pin queue
 def process_pin_queue():
     while True:
-        with pin_queue_lock:
-            if pin_queue.empty():
-                #print("Pin queue is empty. Waiting for new pins...")
-                time.sleep(1)  # Sleep for 20 seconds before checking the queue again
-                continue
+        try:
+            pin_poster, pin_details = pin_queue.get(timeout=1)  # Adjust the timeout value as needed
+        except queue.Empty:
+            # The timeout occurred, indicating no new pins within the specified time
+            continue
 
         current_time = datetime.datetime.now().time()
         if current_time >= datetime.time(8) and current_time <= datetime.time(22):
-            pin_poster, pin_details = pin_queue.get()
             try:
                 print("Posting pin...")
                 response = pin_poster.create_pin(pin_details)
@@ -224,8 +223,6 @@ def process_pin_queue():
                 # Add the pin back to the queue if it was not successfully posted
                 pin_queue.put((pin_poster, pin_details))
 
-        # Sleep for 2 seconds before processing the next pin in the queue
-        time.sleep(2)
 
 if __name__ == '__main__':
     process_pin_queue_thread = threading.Thread(target=process_pin_queue)
