@@ -12,6 +12,8 @@ import random
 import time
 import schedule
 import threading
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 class PinDetails:
     def __init__(self, img_url, pin_url, pin_title, pin_description):
@@ -33,7 +35,6 @@ class PinPoster:
         self.chrome_options.add_argument('--window-size=1920x1080')
         self.chrome_options.add_argument('--no-sandbox')
         self.chrome_options.add_argument('--disable-dev-shm-usage')
-
         self.driver = None
 
     def find_closest_image(self, img_url, images_list):
@@ -56,7 +57,7 @@ class PinPoster:
         return distances[0][0]
 
     def create_pin(self, pin_details):
-        self.driver = webdriver.Chrome(options=self.chrome_options)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
         self.driver.get('https://www.pinterest.fr/login/')
 
         email_input = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
@@ -207,6 +208,7 @@ def pin():
 def process_pin_queue():
     while True:
         try:
+            # Use queue.get() with a timeout to wait for new pins
             pin_poster, pin_details = pin_queue.get(timeout=1)  # Adjust the timeout value as needed
         except queue.Empty:
             # The timeout occurred, indicating no new pins within the specified time
