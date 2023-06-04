@@ -215,11 +215,15 @@ def process_pin_queue():
             continue
 
         current_time = datetime.datetime.now().time()
-        if current_time >= datetime.time(8) and current_time <= datetime.time(22):
+        if current_time >= datetime.time(8) and current_time <= datetime.time(18):
+            wait_time = random.randint(5, 10) * 60  # Convert minutes to seconds
+            print("Waiting for", wait_time // 60, "minutes before processing the next pin...")
+            time.sleep(wait_time)  # Wait for the specified duration
             try:
                 print("Posting pin...")
                 response = pin_poster.create_pin(pin_details)
                 print(response)  # Print the response
+
             except Exception as e:
                 print("An error occurred while posting pin:", str(e))
                 # Add the pin back to the queue if it was not successfully posted
