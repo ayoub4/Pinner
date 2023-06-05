@@ -46,6 +46,7 @@ def pin():
     pin_url = request.args.get('pin_url')
     pin_title = request.args.get('pin_title')
     pin_description = request.args.get('pin_description')
+    pin_table = request.args.get('pin_table')
     if pin_url:
         # Add any desired Chrome options
         driver = webdriver.Chrome(options=chrome_options, executable_path='/usr/local/bin/chromedriver')
@@ -118,6 +119,22 @@ def pin():
             EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div[2]/div/div/div/div'))
         )
         pin_description_input.send_keys(pin_description)
+
+        time.sleep(0.5)
+
+        tables_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-select-button"]'))
+        )
+        tables_button.click()
+
+        tables_div = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH,
+                                            '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]'))
+        )
+        desired_element = tables_div.find_element(By.XPATH, f'.//*[contains(text(), "{pin_table}")]')
+        desired_element.click()
+
+        time.sleep(0.5)
 
         submit_button = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-save-button"]'))
