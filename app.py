@@ -1208,7 +1208,7 @@ def process_pin_queue():
 
         current_time = datetime.datetime.now().time()
         if (current_time >= datetime.time(8) and current_time <= datetime.time(12)) or (current_time >= datetime.time(14) and current_time <= datetime.time(18)) :
-            wait_time = random.randint(1, 3) * 60  # Convert minutes to seconds
+            wait_time = random.randint(15, 20) * 60  # Convert minutes to seconds
             print("Waiting for", wait_time // 60, "minutes before processing the next pin...")
             time.sleep(wait_time)  # Wait for the specified duration
             try:
