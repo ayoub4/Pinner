@@ -32,10 +32,10 @@ class PinPoster:
     def __init__(self, account):
         self.account = account
         self.chrome_options = webdriver.ChromeOptions()
-        self.chrome_options.add_argument('--headless')
+        """self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--window-size=1920x1080')
         self.chrome_options.add_argument('--no-sandbox')
-        self.chrome_options.add_argument('--disable-dev-shm-usage')
+        self.chrome_options.add_argument('--disable-dev-shm-usage')"""
         self.driver = None
 
     def find_closest_image(self, img_url, images_list):
@@ -509,7 +509,7 @@ class PinPoster:
 
             # Wait for the pin to be created
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="dismiss"]'))
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="Fermer"]'))
             )
 
             # Close the browser
