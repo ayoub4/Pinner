@@ -1341,57 +1341,57 @@ def process_pin_queue():
             continue
 
         current_time = datetime.datetime.now().time()
-        if (current_time >= datetime.time(8) and current_time <= datetime.time(14)) or (current_time >= datetime.time(14) and current_time <= datetime.time(18)) :
-            wait_time = random.randint(1, 2) * 60  # Convert minutes to seconds
-            print("Waiting for", wait_time // 60, "minutes before processing the next pin...")
-            time.sleep(wait_time)  # Wait for the specified duration
-            try:
-                if pin_poster.account.email == "admins@goldenparkproject.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_univers_peluche(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "contact@monpiloupilou.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_mon_pilou_pilou(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "contact@couplesamoureux.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_couples_amoureux(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "contact@marobeboheme.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_ma_robe_boheme(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "contact@robeprincesse.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_robe_princesse(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "contact@espritpolaire.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_esprit_polaire(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "ecomfranceltd@gmail.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_retro_verso(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "contact@montapispriere.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_mon_tapis_priere(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "mamouncherkaoui12345@gmail.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_applique_murale(pin_details)
-                    print(response)
-                elif pin_poster.account.email == "iamfiles123@gmail.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_pyjama_dor(pin_details)
-                    print(response)
-                # Print the response
+        #if (current_time >= datetime.time(8) and current_time <= datetime.time(12)) or (current_time >= datetime.time(14) and current_time <= datetime.time(18)) :
+        wait_time = random.randint(1, 2) * 60  # Convert minutes to seconds
+        print("Waiting for", wait_time // 60, "minutes before processing the next pin...")
+        time.sleep(wait_time)  # Wait for the specified duration
+        try:
+            if pin_poster.account.email == "admins@goldenparkproject.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_univers_peluche(pin_details)
+                print(response)  # Print the response
+            elif pin_poster.account.email == "contact@monpiloupilou.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_mon_pilou_pilou(pin_details)
+                print(response)  # Print the response
+            elif pin_poster.account.email == "contact@couplesamoureux.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_couples_amoureux(pin_details)
+                print(response)  # Print the response
+            elif pin_poster.account.email == "contact@marobeboheme.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_ma_robe_boheme(pin_details)
+                print(response)  # Print the response
+            elif pin_poster.account.email == "contact@robeprincesse.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_robe_princesse(pin_details)
+                print(response)  # Print the response
+            elif pin_poster.account.email == "contact@espritpolaire.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_esprit_polaire(pin_details)
+                print(response)  # Print the response
+            elif pin_poster.account.email == "ecomfranceltd@gmail.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_retro_verso(pin_details)
+                print(response)  # Print the response
+            elif pin_poster.account.email == "contact@montapispriere.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_mon_tapis_priere(pin_details)
+                print(response)  # Print the response
+            elif pin_poster.account.email == "mamouncherkaoui12345@gmail.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_applique_murale(pin_details)
+                print(response)
+            elif pin_poster.account.email == "iamfiles123@gmail.com":
+                print("Posting pin : " + pin_details.pin_title + "...")
+                response = pin_poster.create_pin_pyjama_dor(pin_details)
+                print(response)
+            # Print the response
 
-            except Exception as e:
-                print("An error occurred while posting pin:", str(e))
-                # Add the pin back to the queue if it was not successfully posted
-                pin_queue.put((pin_poster, pin_details))
+        except Exception as e:
+            print("An error occurred while posting pin:", str(e))
+            # Add the pin back to the queue if it was not successfully posted
+            pin_queue.put((pin_poster, pin_details))
 
 
 if __name__ == '__main__':
