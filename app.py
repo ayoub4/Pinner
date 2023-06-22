@@ -61,8 +61,8 @@ class PinPoster:
 
     def create_pin_couples_amoureux(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
-            self.driver.get('https://www.pinterest.fr/pin-builder/?tab=save_from_url')
+            self.driver = webdriver.Chrome(options=self.chrome_options)
+            self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
             email_input.send_keys(self.account.email)
@@ -75,7 +75,9 @@ class PinPoster:
 
             WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-            create_pin_button = self.driver.find_element(By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,
+                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -170,7 +172,7 @@ class PinPoster:
 
     def create_pin_univers_peluche(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
@@ -183,8 +185,8 @@ class PinPoster:
             login_button.click()
 
             WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
-
-            create_pin_button = self.driver.find_element(By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -282,7 +284,7 @@ class PinPoster:
 
     def create_pin_mon_pilou_pilou(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(
@@ -299,8 +301,9 @@ class PinPoster:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-            create_pin_button = self.driver.find_element(By.XPATH,
-                                                         '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,
+                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -403,7 +406,7 @@ class PinPoster:
 
     def create_pin_ma_robe_boheme(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(
@@ -420,8 +423,9 @@ class PinPoster:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-            create_pin_button = self.driver.find_element(By.XPATH,
-                                                         '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,
+                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -525,7 +529,7 @@ class PinPoster:
 
     def create_pin_robe_princesse(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(
@@ -542,8 +546,9 @@ class PinPoster:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-            create_pin_button = self.driver.find_element(By.XPATH,
-                                                         '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,
+                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -631,7 +636,7 @@ class PinPoster:
 
             # Wait for the pin to be created
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="dismiss"]'))
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="Fermer"]'))
             )
 
             # Close the browser
@@ -646,7 +651,7 @@ class PinPoster:
 
     def create_pin_pyjama_dor(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(
@@ -663,8 +668,9 @@ class PinPoster:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-            create_pin_button = self.driver.find_element(By.XPATH,
-                                                         '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,
+                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -768,7 +774,7 @@ class PinPoster:
 
     def create_pin_esprit_polaire(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(
@@ -785,8 +791,9 @@ class PinPoster:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-            create_pin_button = self.driver.find_element(By.XPATH,
-                                                         '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,
+                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -890,7 +897,7 @@ class PinPoster:
 
     def create_pin_mon_tapis_priere(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(
@@ -907,8 +914,9 @@ class PinPoster:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-            create_pin_button = self.driver.find_element(By.XPATH,
-                                                         '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,
+                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -1012,7 +1020,7 @@ class PinPoster:
 
     def create_pin_applique_murale(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(
@@ -1029,8 +1037,9 @@ class PinPoster:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-            create_pin_button = self.driver.find_element(By.XPATH,
-                                                         '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,
+                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -1135,7 +1144,7 @@ class PinPoster:
 
     def create_pin_retro_verso(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(
@@ -1152,8 +1161,9 @@ class PinPoster:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
 
-            create_pin_button = self.driver.find_element(By.XPATH,
-                                                         '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[2]/div/button/div')
+            create_pin_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,
+                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
             create_pin_button.click()
 
             WebDriverWait(self.driver, 10).until(
@@ -1277,13 +1287,13 @@ def pin():
     if pin_url:
         if website == 'Univers Peluche':
             email = 'admins@goldenparkproject.com'
-            password = 'bhjbhj2@Ss'
+            password = 'AyoubMamoun123'
         elif website == 'mon pilou pilou':
             email = 'contact@monpiloupilou.com'
             password = 'bhjbhj2@Ss'
         elif website == 'couples amoureux':
             email = 'contact@couplesamoureux.com'
-            password = 'bhjbhj2@Sssa'
+            password = 'AyoubMamoun123'
         elif website == 'ma robe boheme':
             email = 'contact@marobeboheme.com'
             password = 'bhjbhj2@Ss'
@@ -1298,10 +1308,10 @@ def pin():
             password = 'bhjbhj2@Ss'
         elif website == 'mon tapis priere':
             email = 'contact@montapispriere.com'
-            password = 'bhjbhj2@Ss'
+            password = 'AyoubMamoun123'
         elif website == 'applique murale':
             email = 'mamouncherkaoui12345@gmail.com'
-            password = 'Szzk@2za'
+            password = 'AyoubMamoun123'
         elif website == 'pyjama d\'or':
             email = 'iamfiles123@gmail.com'
             password = 'bhjbhj2@Ss'
@@ -1331,8 +1341,8 @@ def process_pin_queue():
             continue
 
         current_time = datetime.datetime.now().time()
-        if (current_time >= datetime.time(8) and current_time <= datetime.time(12)) or (current_time >= datetime.time(14) and current_time <= datetime.time(18)) :
-            wait_time = random.randint(15, 20) * 60  # Convert minutes to seconds
+        if (current_time >= datetime.time(8) and current_time <= datetime.time(14)) or (current_time >= datetime.time(14) and current_time <= datetime.time(18)) :
+            wait_time = random.randint(1, 2) * 60  # Convert minutes to seconds
             print("Waiting for", wait_time // 60, "minutes before processing the next pin...")
             time.sleep(wait_time)  # Wait for the specified duration
             try:
