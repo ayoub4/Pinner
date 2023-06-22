@@ -172,7 +172,7 @@ class PinPoster:
 
     def create_pin_univers_peluche(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(options=self.chrome_options)
+            self.driver = webdriver.Chrome(options=self.chrome_options, executable_path="chromedriver",)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
