@@ -1347,7 +1347,7 @@ def process_pin_queue():
             time.sleep(60)  # Wait for 1 minute before checking the time again
             current_time = datetime.datetime.now().time()
 
-        wait_time = random.randint(1, 2) * 60  # Convert minutes to seconds
+        wait_time = random.randint(15, 20) * 60  # Convert minutes to seconds
         print("Waiting for", wait_time // 60, "minutes before processing the next pin...")
         time.sleep(wait_time)  # Wait for the specified duration
 
