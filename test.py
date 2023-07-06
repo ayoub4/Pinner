@@ -6,7 +6,7 @@ api_url = 'http://127.0.0.1:8000/pin'
 
 
 Mon_Pilou_Pilou = "https://monpiloupilou.com/pilou-pilou-femme/ensemble-pyjama-chauffant-pilou-pilou/&pin_description=&pin_title=Ensemble%20pyjama%20chauffant%20pilou%20pilou&img_url=https://monpiloupilou.com/wp-content/uploads/2023/05/main-image-2-11-150x150.jpeg&website=mon%20pilou%20pilou&pin_table=Pyjama%20Pilou%20Pilou%20femme"
-Couples_Amoureux = "https://couplesamoureux.com/bijoux-couple/bague-couple/bagues-duos-pour-les-biens-aimes/&pin_description=&pin_title=Bagues%20duos%20pour%20les%20biens%20aim%C3%A9s&img_url=https://couplesamoureux.com/wp-content/uploads/2023/06/main-image-3-26-wpp1687026260888-150x150.jpeg&website=couples%20amoureux&pin_table=Bague%20Couple"
+Couples_Amoureux = "https://couplesamoureux.com/bijoux-couple/collier-couple/collier-avec-medaillon-en-forme-de-coeur-avec-quatre-feuilles-de-trefle/&pin_description=&pin_title=Collier%20avec%20m%C3%A9daillon%20en%20forme%20de%20c%C5%93ur%20avec%20quatre%20feuilles%20de%20tr%C3%A8fle&img_url=https://couplesamoureux.com/wp-content/uploads/2023/06/Pendentif-cadre-photo-r-tro-en-forme-de-c-ur-quatre-feuilles-Everver-multicouche-bricolage-accessoires.jpg_Q90.jpg_-1-150x150.png&website=couples%20amoureux&pin_table=Collier%20couple"
 Applique_Murale = "https://appliquemurale.com/applique-murale-orientable/applique-murale-orientable-americaine/&pin_description=&pin_title=Applique%20murale%20orientable%20am%C3%A9ricaine&img_url=https://appliquemurale.com/wp-content/uploads/2023/04/Applique-murale-industrielle-am-ricaine-noir-argent-E27-lampe-rotative-Long-bras-avec-interrupteur-pour-chevet.jpg_Q90.jpg_-150x150.webp&website=applique%20murale&pin_table=Appliques%20Murales"
 robe_princesse = "https://robeprincesse.com/robe-princesse-disney/robe-de-princesse-disney-bleue/&pin_description=&pin_title=Robe%20de%20princesse%20Disney%20bleue&img_url=https://robeprincesse.com/wp-content/uploads/2023/03/O1CN015ZI5ny1bgl2gE9jbE_2866793495-150x150.jpg&website=robe%20princesse&pin_table=Robe%20de%20princesse%20disney"
 ma_robe_boheme = "https://marobeboheme.com/robe-longue-boheme/robe-longue-fleurie-boheme/robe-cocktail-style-boheme-chic-bleue-avec-cordon-de-serrage-imprimee/&pin_description=&pin_title=Robe%20cocktail%20style%20boh%C3%A8me%20chic%20bleue%20avec%20cordon%20de%20serrage%20imprim%C3%A9e&img_url=https://marobeboheme.com/wp-content/uploads/2023/06/Robe-longue-boutonn-e-avec-cordon-de-serrage-motif-Floral-style-Boho-Chic-d-contract-v.jpg_640x640-150x150.jpg&website=ma%20robe%20boheme&pin_table=Robe%20Fleurie%20Boh%C3%A8me"
@@ -19,7 +19,7 @@ retro_verso = "https://retro-verso.fr/style-annees-60/robes-annees-60/robe-jaune
 
 
 
-response = requests.get("http://127.0.0.1:8000/pin?pin_url="+univers_peluche)
+response = requests.get("http://127.0.0.1:8000/pin?pin_url="+retro_verso)
 
 # Check the response
 if response.status_code == 200:

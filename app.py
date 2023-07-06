@@ -90,7 +90,7 @@ class PinPoster:
 
             WebDriverWait(self.driver, 10).until(
                 EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[3]/div'))
+                    (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[3]/div'))
             )
             create_pin_button_3 = WebDriverWait(self.driver, 10).until(
                 EC.visibility_of_element_located((By.XPATH, './/*[text()="Créer une nouvelle Épingle"]'))
@@ -172,7 +172,7 @@ class PinPoster:
 
     def create_pin_univers_peluche(self, pin_details):
         try:
-            self.driver = webdriver.Chrome(options=self.chrome_options, executable_path="chromedriver",)
+            self.driver = webdriver.Chrome(options=self.chrome_options)
             self.driver.get('https://www.pinterest.fr/login/')
 
             email_input = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
@@ -199,14 +199,14 @@ class PinPoster:
 
             """WebDriverWait(self.driver, 10).until(
                 EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[3]/div'))
+                    (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[3]/div'))
             )
             create_pin_button_3 = WebDriverWait(self.driver, 10).until(
                 EC.visibility_of_element_located((By.XPATH, './/*[text()="Créer une nouvelle Épingle"]'))
             )
             create_pin_button_3.click()"""
 
-            create_pin_by_url = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[text()="Créer des Épingles à partir d’une URL"]')))
+            create_pin_by_url = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[text()="Enregistrer depuis l’URL"]')))
             create_pin_by_url.click()
 
             pin_url_input = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, 'scrape-view-website-link')))
@@ -1296,7 +1296,7 @@ def pin():
             password = 'AyoubMamoun123'
         elif website == 'ma robe boheme':
             email = 'contact@marobeboheme.com'
-            password = 'bhjbhj2@Ss'
+            password = 'MamounAyoub123'
         elif website == 'robe princesse':
             email = 'contact@robeprincesse.com'
             password = 'bhjbhj2@Ss'
@@ -1305,7 +1305,7 @@ def pin():
             password = 'bhjbhj2@Ss'
         elif website == 'retro verso':
             email = 'ecomfranceltd@gmail.com'
-            password = 'bhjbhj2@Ss'
+            password = 'AyoubMamoun123'
         elif website == 'mon tapis priere':
             email = 'contact@montapispriere.com'
             password = 'AyoubMamoun123'
@@ -1341,11 +1341,17 @@ def process_pin_queue():
             continue
 
         current_time = datetime.datetime.now().time()
-        if (current_time >= datetime.time(8) and current_time <= datetime.time(12)) or (current_time >= datetime.time(14) and current_time <= datetime.time(18)) :
-            wait_time = random.randint(1, 2) * 60  # Convert minutes to seconds
-            print("Waiting for", wait_time // 60, "minutes before processing the next pin...")
-            time.sleep(wait_time)  # Wait for the specified duration
-            try:
+        while not ((current_time >= datetime.time(8) and current_time <= datetime.time(12)) or (current_time >= datetime.time(14) and current_time <= datetime.time(18))):
+            # Current time is not within the allowed posting times
+            print("Current time is not within the allowed posting times. Waiting...")
+            time.sleep(60)  # Wait for 1 minute before checking the time again
+            current_time = datetime.datetime.now().time()
+
+        wait_time = random.randint(1, 2) * 60  # Convert minutes to seconds
+        print("Waiting for", wait_time // 60, "minutes before processing the next pin...")
+        time.sleep(wait_time)  # Wait for the specified duration
+
+        try:
                 if pin_poster.account.email == "admins@goldenparkproject.com":
                     print("Posting pin : " + pin_details.pin_title + "...")
                     response = pin_poster.create_pin_univers_peluche(pin_details)
@@ -1388,15 +1394,19 @@ def process_pin_queue():
                     print(response)
                 # Print the response
 
-            except Exception as e:
-                print("An error occurred while posting pin:", str(e))
-                # Add the pin back to the queue if it was not successfully posted
-                pin_queue.put((pin_poster, pin_details))
-            finally:
-                if pin_poster.driver:
-                    pin_poster.driver.quit()
 
+        except Exception as e:
 
+            print("An error occurred while posting pin:", str(e))
+
+            # Add the pin back to the queue if it was not successfully posted
+
+            pin_queue.put((pin_poster, pin_details))
+
+        finally:
+
+            if pin_poster.driver:
+                pin_poster.driver.quit()
 
 if __name__ == '__main__':
     process_pin_queue_thread = threading.Thread(target=process_pin_queue)
