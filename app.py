@@ -15,6 +15,8 @@ import schedule
 import threading
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+import yagmail as yagmail
+
 
 class PinDetails:
     def __init__(self, img_url, pin_url, pin_title, pin_description, pin_table):
@@ -32,10 +34,10 @@ class PinPoster:
     def __init__(self, account):
         self.account = account
         self.chrome_options = webdriver.ChromeOptions()
-        self.chrome_options.add_argument('--headless')
+        """self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--window-size=1920x1080')
         self.chrome_options.add_argument('--no-sandbox')
-        self.chrome_options.add_argument('--disable-dev-shm-usage')
+        self.chrome_options.add_argument('--disable-dev-shm-usage')"""
         self.driver = None
 
     def find_closest_image(self, img_url, images_list):
@@ -282,128 +284,6 @@ class PinPoster:
                 self.driver.quit()
 
 
-    def create_pin_mon_pilou_pilou(self, pin_details):
-        try:
-            self.driver = webdriver.Chrome(options=self.chrome_options)
-            self.driver.get('https://www.pinterest.fr/login/')
-
-            email_input = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
-            email_input.send_keys(self.account.email)
-
-            password_input = self.driver.find_element(By.XPATH, '//*[@id="password"]')
-            password_input.send_keys(self.account.password)
-
-            login_button = self.driver.find_element(By.XPATH,
-                                                    '//*[@id="mweb-unauth-container"]/div/div[3]/div/div/div[3]/form/div[7]/button')
-            login_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
-
-            create_pin_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
-            create_pin_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="create-menu-content"]'))
-            )
-            create_menu_content = self.driver.find_element(By.XPATH, '//*[@id="create-menu-content"]')
-            create_pin_button_2 = create_menu_content.find_element(By.XPATH, './/*[text()="Créer une Épingle Idée"]')
-            create_pin_button_2.click()
-
-            """WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[3]/div'))
-            )
-            create_pin_button_3 = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, './/*[text()="Créer une nouvelle Épingle"]'))
-            )
-            create_pin_button_3.click()"""
-
-            create_pin_by_url = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[text()="Créer des Épingles à partir d’une URL"]')))
-            create_pin_by_url.click()
-
-            pin_url_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, 'scrape-view-website-link')))
-            pin_url_input.send_keys(pin_details.pin_url)
-
-            pin_url_go = self.driver.find_element(By.XPATH,
-                                                  '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[3]/div/div/button/div/div')
-            pin_url_go.click()
-
-            time.sleep(3)
-            image_elements = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, '//img[contains(@alt, "Sélectionner l\'image dans")]'))
-            )
-            # Get the src attribute values
-            image_sources = [image_element.get_attribute('src') for image_element in image_elements]
-            result = self.find_closest_image(pin_details.img_url, image_sources)
-
-            for image_element in image_elements:
-                if image_element.get_attribute('src') == result:
-                    image_element.click()
-                    break
-
-            pin_confirm = self.driver.find_element(By.XPATH,
-                                                   '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div[2]/button/div/div')
-            pin_confirm.click()
-
-            # Wait for the pin title input to be present
-            pin_title_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[1]/div/div/div[1]/textarea'))
-            )
-            pin_title_input.send_keys(pin_details.pin_title)
-
-            # Wait for the pin description input to be present
-            pin_description_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div[2]/div/div/div/div'))
-            )
-            pin_description_input.send_keys(pin_details.pin_description)
-
-            time.sleep(0.5)
-
-            tables_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-select-button"]'))
-            )
-            tables_button.click()
-
-            tables_div = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]'))
-            )
-            desired_element = tables_div.find_element(By.XPATH, f'.//*[contains(text(), "{pin_details.pin_table}")]')
-            desired_element.click()
-
-            time.sleep(0.5)
-
-            submit_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-save-button"]'))
-            )
-            publish_button = submit_button.find_element(By.XPATH, './/*[contains(text(), "Publier")]')
-            time.sleep(0.5)
-            publish_button.click()
-
-            # Wait for the pin to be created
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="dismiss"]'))
-            )
-
-            # Close the browser
-            self.driver.quit()
-
-            return "Pin posted: " + pin_details.pin_title
-        except Exception as e:
-            print("An error occurred:", e)
-        finally:
-            if self.driver:
-                self.driver.quit()
-
     def create_pin_ma_robe_boheme(self, pin_details):
         try:
             self.driver = webdriver.Chrome(options=self.chrome_options)
@@ -527,128 +407,6 @@ class PinPoster:
                 self.driver.quit()
 
 
-    def create_pin_robe_princesse(self, pin_details):
-        try:
-            self.driver = webdriver.Chrome(options=self.chrome_options)
-            self.driver.get('https://www.pinterest.fr/login/')
-
-            email_input = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
-            email_input.send_keys(self.account.email)
-
-            password_input = self.driver.find_element(By.XPATH, '//*[@id="password"]')
-            password_input.send_keys(self.account.password)
-
-            login_button = self.driver.find_element(By.XPATH,
-                                                    '//*[@id="mweb-unauth-container"]/div/div[3]/div/div/div[3]/form/div[7]/button')
-            login_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
-
-            create_pin_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
-            create_pin_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="create-menu-content"]'))
-            )
-            create_menu_content = self.driver.find_element(By.XPATH, '//*[@id="create-menu-content"]')
-            create_pin_button_2 = create_menu_content.find_element(By.XPATH, './/*[text()="Créer une Épingle Idée"]')
-            create_pin_button_2.click()
-
-            """WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[3]/div'))
-            )
-            create_pin_button_3 = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, './/*[text()="Créer une nouvelle Épingle"]'))
-            )
-            create_pin_button_3.click()"""
-
-            create_pin_by_url = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[text()="Créer des Épingles à partir d’une URL"]')))
-            create_pin_by_url.click()
-
-            pin_url_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, 'scrape-view-website-link')))
-            pin_url_input.send_keys(pin_details.pin_url)
-
-            pin_url_go = self.driver.find_element(By.XPATH,
-                                                  '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[3]/div/div/button/div/div')
-            pin_url_go.click()
-
-            time.sleep(3)
-            image_elements = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, '//img[contains(@alt, "Sélectionner l\'image dans")]'))
-            )
-            # Get the src attribute values
-            image_sources = [image_element.get_attribute('src') for image_element in image_elements]
-            result = self.find_closest_image(pin_details.img_url, image_sources)
-
-            for image_element in image_elements:
-                if image_element.get_attribute('src') == result:
-                    image_element.click()
-                    break
-
-            pin_confirm = self.driver.find_element(By.XPATH,
-                                                   '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div[2]/button/div/div')
-            pin_confirm.click()
-
-            # Wait for the pin title input to be present
-            pin_title_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[1]/div/div/div[1]/textarea'))
-            )
-            pin_title_input.send_keys(pin_details.pin_title)
-
-            # Wait for the pin description input to be present
-            pin_description_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div[2]/div/div/div/div'))
-            )
-            pin_description_input.send_keys(pin_details.pin_description)
-
-            time.sleep(0.5)
-
-            tables_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-select-button"]'))
-            )
-            tables_button.click()
-
-            tables_div = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]'))
-            )
-            desired_element = tables_div.find_element(By.XPATH, f'.//*[contains(text(), "{pin_details.pin_table}")]')
-            desired_element.click()
-
-            time.sleep(0.5)
-
-            submit_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-save-button"]'))
-            )
-            publish_button = submit_button.find_element(By.XPATH, './/*[contains(text(), "Publier")]')
-            time.sleep(0.5)
-            publish_button.click()
-
-            # Wait for the pin to be created
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="Fermer"]'))
-            )
-
-            # Close the browser
-            self.driver.quit()
-
-            return "Pin posted: " + pin_details.pin_title
-        except Exception as e:
-            print("An error occurred:", e)
-        finally:
-            if self.driver:
-                self.driver.quit()
-
     def create_pin_pyjama_dor(self, pin_details):
         try:
             self.driver = webdriver.Chrome(options=self.chrome_options)
@@ -691,7 +449,7 @@ class PinPoster:
             create_pin_button_3.click()"""
 
             create_pin_by_url = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[text()="Créer des Épingles à partir d’une URL"]')))
+                EC.presence_of_element_located((By.XPATH, '//*[text()="Enregistrer depuis l’URL"]')))
             create_pin_by_url.click()
 
             pin_url_input = WebDriverWait(self.driver, 10).until(
@@ -765,381 +523,12 @@ class PinPoster:
             self.driver.quit()
 
             return "Pin posted: " + pin_details.pin_title
-        except Exception as e:
-            print("An error occurred:", e)
         finally:
             if self.driver:
                 self.driver.quit()
 
 
-    def create_pin_esprit_polaire(self, pin_details):
-        try:
-            self.driver = webdriver.Chrome(options=self.chrome_options)
-            self.driver.get('https://www.pinterest.fr/login/')
 
-            email_input = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
-            email_input.send_keys(self.account.email)
-
-            password_input = self.driver.find_element(By.XPATH, '//*[@id="password"]')
-            password_input.send_keys(self.account.password)
-
-            login_button = self.driver.find_element(By.XPATH,
-                                                    '//*[@id="mweb-unauth-container"]/div/div[3]/div/div/div[3]/form/div[7]/button')
-            login_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
-
-            create_pin_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
-            create_pin_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="create-menu-content"]'))
-            )
-            create_menu_content = self.driver.find_element(By.XPATH, '//*[@id="create-menu-content"]')
-            create_pin_button_2 = create_menu_content.find_element(By.XPATH, './/*[text()="Créer une Épingle Idée"]')
-            create_pin_button_2.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[3]/div'))
-            )
-            create_pin_button_3 = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, './/*[text()="Créer une nouvelle Épingle"]'))
-            )
-            create_pin_button_3.click()
-
-            create_pin_by_url = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[text()="Créer des Épingles à partir d’une URL"]')))
-            create_pin_by_url.click()
-
-            pin_url_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, 'scrape-view-website-link')))
-            pin_url_input.send_keys(pin_details.pin_url)
-
-            pin_url_go = self.driver.find_element(By.XPATH,
-                                                  '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[3]/div/div/button/div/div')
-            pin_url_go.click()
-
-            time.sleep(3)
-            image_elements = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, '//img[contains(@alt, "Sélectionner l\'image dans")]'))
-            )
-            # Get the src attribute values
-            image_sources = [image_element.get_attribute('src') for image_element in image_elements]
-            result = self.find_closest_image(pin_details.img_url, image_sources)
-
-            for image_element in image_elements:
-                if image_element.get_attribute('src') == result:
-                    image_element.click()
-                    break
-
-            pin_confirm = self.driver.find_element(By.XPATH,
-                                                   '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div[2]/button/div/div')
-            pin_confirm.click()
-
-            # Wait for the pin title input to be present
-            pin_title_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[1]/div/div/div[1]/textarea'))
-            )
-            pin_title_input.send_keys(pin_details.pin_title)
-
-            # Wait for the pin description input to be present
-            pin_description_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div[2]/div/div/div/div'))
-            )
-            pin_description_input.send_keys(pin_details.pin_description)
-
-            time.sleep(0.5)
-
-            tables_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-select-button"]'))
-            )
-            tables_button.click()
-
-            tables_div = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]'))
-            )
-            desired_element = tables_div.find_element(By.XPATH, f'.//*[contains(text(), "{pin_details.pin_table}")]')
-            desired_element.click()
-
-            time.sleep(0.5)
-
-            submit_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-save-button"]'))
-            )
-            publish_button = submit_button.find_element(By.XPATH, './/*[contains(text(), "Publier")]')
-            time.sleep(0.5)
-            publish_button.click()
-
-            # Wait for the pin to be created
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="dismiss"]'))
-            )
-
-            # Close the browser
-            self.driver.quit()
-
-            return "Pin posted: " + pin_details.pin_title
-        except Exception as e:
-            print("An error occurred:", e)
-        finally:
-            if self.driver:
-                self.driver.quit()
-
-
-    def create_pin_mon_tapis_priere(self, pin_details):
-        try:
-            self.driver = webdriver.Chrome(options=self.chrome_options)
-            self.driver.get('https://www.pinterest.fr/login/')
-
-            email_input = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
-            email_input.send_keys(self.account.email)
-
-            password_input = self.driver.find_element(By.XPATH, '//*[@id="password"]')
-            password_input.send_keys(self.account.password)
-
-            login_button = self.driver.find_element(By.XPATH,
-                                                    '//*[@id="mweb-unauth-container"]/div/div[3]/div/div/div[3]/form/div[7]/button')
-            login_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
-
-            create_pin_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
-            create_pin_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="create-menu-content"]'))
-            )
-            create_menu_content = self.driver.find_element(By.XPATH, '//*[@id="create-menu-content"]')
-            create_pin_button_2 = create_menu_content.find_element(By.XPATH, './/*[text()="Créer une Épingle Idée"]')
-            create_pin_button_2.click()
-
-            """WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[3]/div'))
-            )
-            create_pin_button_3 = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, './/*[text()="Créer une nouvelle Épingle"]'))
-            )
-            create_pin_button_3.click()"""
-
-            create_pin_by_url = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[text()="Créer des Épingles à partir d’une URL"]')))
-            create_pin_by_url.click()
-
-            pin_url_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, 'scrape-view-website-link')))
-            pin_url_input.send_keys(pin_details.pin_url)
-
-            pin_url_go = self.driver.find_element(By.XPATH,
-                                                  '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[3]/div/div/button/div/div')
-            pin_url_go.click()
-
-            time.sleep(3)
-            image_elements = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, '//img[contains(@alt, "Sélectionner l\'image dans")]'))
-            )
-            # Get the src attribute values
-            image_sources = [image_element.get_attribute('src') for image_element in image_elements]
-            result = self.find_closest_image(pin_details.img_url, image_sources)
-
-            for image_element in image_elements:
-                if image_element.get_attribute('src') == result:
-                    image_element.click()
-                    break
-
-            pin_confirm = self.driver.find_element(By.XPATH,
-                                                   '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div[2]/button/div/div')
-            pin_confirm.click()
-
-            # Wait for the pin title input to be present
-            pin_title_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[1]/div/div/div[1]/textarea'))
-            )
-            pin_title_input.send_keys(pin_details.pin_title)
-
-            # Wait for the pin description input to be present
-            pin_description_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div[2]/div/div/div/div'))
-            )
-            pin_description_input.send_keys(pin_details.pin_description)
-
-            time.sleep(0.5)
-
-            tables_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-select-button"]'))
-            )
-            tables_button.click()
-
-            tables_div = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]'))
-            )
-            desired_element = tables_div.find_element(By.XPATH, f'.//*[contains(text(), "{pin_details.pin_table}")]')
-            desired_element.click()
-
-            time.sleep(0.5)
-
-            submit_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-save-button"]'))
-            )
-            publish_button = submit_button.find_element(By.XPATH, './/*[contains(text(), "Publier")]')
-            time.sleep(0.5)
-            publish_button.click()
-
-            # Wait for the pin to be created
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="dismiss"]'))
-            )
-
-            # Close the browser
-            self.driver.quit()
-
-            return "Pin posted: " + pin_details.pin_title
-        except Exception as e:
-            print("An error occurred:", e)
-        finally:
-            if self.driver:
-                self.driver.quit()
-
-
-    def create_pin_applique_murale(self, pin_details):
-        try:
-            self.driver = webdriver.Chrome(options=self.chrome_options)
-            self.driver.get('https://www.pinterest.fr/login/')
-
-            email_input = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, '//*[@id="email"]')))
-            email_input.send_keys(self.account.email)
-
-            password_input = self.driver.find_element(By.XPATH, '//*[@id="password"]')
-            password_input.send_keys(self.account.password)
-
-            login_button = self.driver.find_element(By.XPATH,
-                                                    '//*[@id="mweb-unauth-container"]/div/div[3]/div/div/div[3]/form/div[7]/button')
-            login_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="landing-page"]')))
-
-            create_pin_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/button/div/div/div[1]/div')))
-            create_pin_button.click()
-
-            WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="create-menu-content"]'))
-            )
-            create_menu_content = self.driver.find_element(By.XPATH, '//*[@id="create-menu-content"]')
-            create_pin_button_2 = create_menu_content.find_element(By.XPATH, './/*[text()="Créer une Épingle Idée"]')
-            create_pin_button_2.click()
-
-            """WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.XPATH, '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[3]/div'))
-            )
-            create_pin_button_3 = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.XPATH, './/*[text()="Créer une nouvelle Épingle"]'))
-            )
-            create_pin_button_3.click()"""
-
-            create_pin_by_url = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[text()="Créer des Épingles à partir d’une URL"]')))
-            create_pin_by_url.click()
-
-            pin_url_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, 'scrape-view-website-link')))
-            pin_url_input.send_keys(pin_details.pin_url)
-
-            pin_url_go = self.driver.find_element(By.XPATH,
-                                                  '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[3]/div/div/button/div/div')
-            pin_url_go.click()
-
-            time.sleep(3)
-            image_elements = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, '//img[contains(@alt, "Sélectionner l\'image dans")]'))
-            )
-            # Get the src attribute values
-            image_sources = [image_element.get_attribute('src') for image_element in image_elements]
-            result = self.find_closest_image(pin_details.img_url, image_sources)
-
-            for image_element in image_elements:
-                if image_element.get_attribute('src') == result:
-                    image_element.click()
-                    break
-
-            pin_confirm = self.driver.find_element(By.XPATH,
-                                                   '//*[@id="__PWS_ROOT__"]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div[2]/button/div/div')
-            pin_confirm.click()
-
-            # Wait for the pin title input to be present
-            pin_title_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[1]/div/div/div[1]/textarea'))
-            )
-            pin_title_input.send_keys(pin_details.pin_title)
-
-            # Wait for the pin description input to be present
-            pin_description_input = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div[2]/div/div/div/div'))
-            )
-            pin_description_input.send_keys(pin_details.pin_description)
-
-            time.sleep(0.5)
-
-            tables_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-select-button"]'))
-            )
-            tables_button.click()
-
-            tables_div = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,
-                                                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div/div/div/div/div/div/div[2]'))
-            )
-            desired_element = tables_div.find_element(By.XPATH, f'.//*[contains(text(), "{pin_details.pin_table}")]')
-            desired_element.click()
-
-            time.sleep(0.5)
-
-            submit_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="board-dropdown-save-button"]'))
-            )
-            publish_button = submit_button.find_element(By.XPATH, './/*[contains(text(), "Publier")]')
-            time.sleep(0.5)
-            publish_button.click()
-
-            # Wait for the pin to be created
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'button[aria-label="dismiss"]'))
-            )
-
-            # Close the browser
-            self.driver.quit()
-
-            return "Pin posted: " + pin_details.pin_title
-
-        except Exception as e:
-            print("An error occurred:", e)
-        finally:
-            if self.driver:
-                self.driver.quit()
 
 
     def create_pin_retro_verso(self, pin_details):
@@ -1268,6 +657,30 @@ class PinPoster:
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
+
+def send_email_to_blog(pin_details):
+
+    email_du_blog_value = "btissamloukili12@gmail.com"
+    email_content = "Posting " + pin_details.pin_title + " Failed"
+
+    smtp_username = 'parkg821@gmail.com'
+    smtp_password = 'hysgkspboljtaock'
+
+    try:
+        # Create a yagmail SMTP client
+        yag = yagmail.SMTP(smtp_username, smtp_password)
+
+        # Randomly select a subject from the objects list
+        subject = "Pin Failed"
+
+        # Send the email with the random subject
+        yag.send(to=email_du_blog_value, subject=subject, contents=email_content)
+
+        print(f"Email sent to {email_du_blog_value}")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -1287,34 +700,19 @@ def pin():
     if pin_url:
         if website == 'Univers Peluche':
             email = 'admins@goldenparkproject.com'
-            password = 'AyoubMamoun123'
-        elif website == 'mon pilou pilou':
-            email = 'contact@monpiloupilou.com'
-            password = 'bhjbhj2@Ss'
+            password = 'AyoubMamoun1234'
         elif website == 'couples amoureux':
             email = 'contact@couplesamoureux.com'
             password = 'AyoubMamoun123'
         elif website == 'ma robe boheme':
             email = 'contact@marobeboheme.com'
             password = 'MamounAyoub123'
-        elif website == 'robe princesse':
-            email = 'contact@robeprincesse.com'
-            password = 'bhjbhj2@Ss'
-        elif website == 'esprit polaire':
-            email = 'contact@espritpolaire.com'
-            password = 'bhjbhj2@Ss'
         elif website == 'retro verso':
             email = 'ecomfranceltd@gmail.com'
             password = 'AyoubMamoun123'
-        elif website == 'mon tapis priere':
-            email = 'contact@montapispriere.com'
-            password = 'AyoubMamoun123'
-        elif website == 'applique murale':
-            email = 'mamouncherkaoui12345@gmail.com'
-            password = 'AyoubMamoun123'
         elif website == 'pyjama d\'or':
             email = 'iamfiles123@gmail.com'
-            password = 'bhjbhj2@Ss'
+            password = 'dznj2dsjz&'
         else:
             return "Error: Not The Right Website"
 
@@ -1356,10 +754,6 @@ def process_pin_queue():
                     print("Posting pin : " + pin_details.pin_title + "...")
                     response = pin_poster.create_pin_univers_peluche(pin_details)
                     print(response)  # Print the response
-                elif pin_poster.account.email == "contact@monpiloupilou.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_mon_pilou_pilou(pin_details)
-                    print(response)  # Print the response
                 elif pin_poster.account.email == "contact@couplesamoureux.com":
                     print("Posting pin : " + pin_details.pin_title + "...")
                     response = pin_poster.create_pin_couples_amoureux(pin_details)
@@ -1368,26 +762,10 @@ def process_pin_queue():
                     print("Posting pin : " + pin_details.pin_title + "...")
                     response = pin_poster.create_pin_ma_robe_boheme(pin_details)
                     print(response)  # Print the response
-                elif pin_poster.account.email == "contact@robeprincesse.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_robe_princesse(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "contact@espritpolaire.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_esprit_polaire(pin_details)
-                    print(response)  # Print the response
                 elif pin_poster.account.email == "ecomfranceltd@gmail.com":
                     print("Posting pin : " + pin_details.pin_title + "...")
                     response = pin_poster.create_pin_retro_verso(pin_details)
                     print(response)  # Print the response
-                elif pin_poster.account.email == "contact@montapispriere.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_mon_tapis_priere(pin_details)
-                    print(response)  # Print the response
-                elif pin_poster.account.email == "mamouncherkaoui12345@gmail.com":
-                    print("Posting pin : " + pin_details.pin_title + "...")
-                    response = pin_poster.create_pin_applique_murale(pin_details)
-                    print(response)
                 elif pin_poster.account.email == "iamfiles123@gmail.com":
                     print("Posting pin : " + pin_details.pin_title + "...")
                     response = pin_poster.create_pin_pyjama_dor(pin_details)
@@ -1400,8 +778,8 @@ def process_pin_queue():
             print("An error occurred while posting pin:", str(e))
 
             # Add the pin back to the queue if it was not successfully posted
-
-            pin_queue.put((pin_poster, pin_details))
+            send_email_to_blog(pin_details)
+           #pin_queue.put((pin_poster, pin_details))
 
         finally:
 
