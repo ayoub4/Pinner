@@ -34,10 +34,10 @@ class PinPoster:
     def __init__(self, account):
         self.account = account
         self.chrome_options = webdriver.ChromeOptions()
-        """self.chrome_options.add_argument('--headless')
+        self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--window-size=1920x1080')
         self.chrome_options.add_argument('--no-sandbox')
-        self.chrome_options.add_argument('--disable-dev-shm-usage')"""
+        self.chrome_options.add_argument('--disable-dev-shm-usage')
         self.driver = None
 
     def find_closest_image(self, img_url, images_list):
@@ -712,7 +712,7 @@ def pin():
             password = 'AyoubMamoun123'
         elif website == 'pyjama d\'or':
             email = 'iamfiles123@gmail.com'
-            password = 'dznj2dsjz&'
+            password = 'dznj2dsjz&@'
         else:
             return "Error: Not The Right Website"
 
