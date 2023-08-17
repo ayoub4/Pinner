@@ -21,7 +21,7 @@ retro_verso = "https://retro-verso.fr/style-annees-60/robes-annees-60/robe-jaune
 
 
 
-response = requests.get("http://127.0.0.1:8000/pin?pin_url="+Pyjamas_dor)
+response = requests.get("http://127.0.0.1:8000/pin?pin_url="+ma_robe_boheme)
 
 # Check the response
 if response.status_code == 200:
