@@ -761,7 +761,7 @@ def process_pin_queue():
             # The timeout occurred, indicating no new pins within the specified time
             continue
 
-        current_time = datetime.datetime.now().time()
+        """current_time = datetime.datetime.now().time()
         while not ((current_time >= datetime.time(8) and current_time <= datetime.time(12)) or (current_time >= datetime.time(14) and current_time <= datetime.time(18))):
             # Current time is not within the allowed posting times
             print("Current time is not within the allowed posting times. Waiting...")
@@ -770,7 +770,7 @@ def process_pin_queue():
 
         wait_time = random.randint(15, 20) * 60  # Convert minutes to seconds
         print("Waiting for", wait_time // 60, "minutes before processing the next pin...")
-        time.sleep(wait_time)  # Wait for the specified duration
+        time.sleep(wait_time)  # Wait for the specified duration"""
 
         try:
                 if pin_poster.account.email == "admins@goldenparkproject.com":
@@ -807,7 +807,7 @@ def process_pin_queue():
                     print(result)
                     if result == "error":
                         send_email_to_blog(pin_details)
-                        pin_queue.put((pin_poster, pin_details))
+
 
         except Exception as e:
 
